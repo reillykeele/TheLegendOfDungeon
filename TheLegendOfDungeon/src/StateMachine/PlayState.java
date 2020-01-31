@@ -229,6 +229,28 @@ public class PlayState extends State {
             Audio.GAMEMUSIC.pause();
         }
     }
+    
+    @Override
+    public void update(double deltaTime) {
+        if (!paused) {
+            if (!player.getDead()) {
+                if (Audio.GAMEMUSIC.paused()) {
+                    Audio.GAMEMUSIC.resume();
+                }
+
+                map.update(deltaTime);
+
+                if (player != null) {
+                    player.update(deltaTime);
+                }
+            } else {
+                //if player dead
+                Audio.GAMEMUSIC.stop();
+            }
+        } else {
+            Audio.GAMEMUSIC.pause();
+        }
+    }
 
     @Override
     public void render(Graphics2D g) {

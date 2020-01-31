@@ -54,7 +54,15 @@ public class Enemy extends Entity {
             checkTileMapCollision();
             setPosition(xtemp, ytemp);
         }
+    }
+    
+    @Override
+    public void update(double deltaTime) {
+        if (!map.transition && !flinching) {
 
+            checkTileMapCollision();
+            setPosition(xtemp, ytemp);
+        }
     }
 
     @Override

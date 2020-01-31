@@ -507,6 +507,68 @@ public class Map {
         }
 
     }
+    
+    public void update(double deltaTime) {
+        if (transition) {
+            switch (transitionInt) {
+                case NORTH:
+                    dx = 0;
+                    dy = TRANSITION_SPEED;
+
+                    if (nextRoomY >= 0 || nextRoomY + dy >= 0) {
+                        transition = false;
+
+                        currRoom.setRow(nextRoom.getRow());
+                        currRoom.setCol(nextRoom.getCol());
+                    }
+
+                    break;
+                case EAST:
+                    dx = -TRANSITION_SPEED;
+                    dy = 0;
+
+                    if (nextRoomX <= 0 || nextRoomX + dx <= 0) {
+                        transition = false;
+
+                        currRoom.setRow(nextRoom.getRow());
+                        currRoom.setCol(nextRoom.getCol());
+                    }
+
+                    break;
+                case SOUTH:
+                    dx = 0;
+                    dy = -TRANSITION_SPEED;
+
+                    if (nextRoomY <= 0 || nextRoomY + dy <= 0) {
+                        transition = false;
+
+                        currRoom.setRow(nextRoom.getRow());
+                        currRoom.setCol(nextRoom.getCol());
+                    }
+                    break;
+                case WEST:
+                    dx = TRANSITION_SPEED;
+                    dy = 0;
+
+                    if (nextRoomX >= 0 || nextRoomX + dx >= 0) {
+                        transition = false;
+
+                        currRoom.setRow(nextRoom.getRow());
+                        currRoom.setCol(nextRoom.getCol());
+                    }
+                    break;
+            }
+
+            nextRoomY += dy;
+            nextRoomX += dx;
+
+            currRoomY += dy;
+            currRoomX += dx;
+
+        } else if (rooms[currRoom.getRow()][currRoom.getCol()] != null) {
+            rooms[currRoom.getRow()][currRoom.getCol()].update(deltaTime);
+        }
+    }
 
     public void render(Graphics2D g) {
 
@@ -599,6 +661,6 @@ public class Map {
             }
         }
 
-    }
+    }    
 
 }

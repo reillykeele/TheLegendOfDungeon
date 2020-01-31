@@ -412,6 +412,25 @@ public class Room {
             unlockDoors();
         }
     }
+    
+    public void update(double deltaTime) {
+
+        int i = 0;
+        while (i < enemies.size()) {
+            enemies.get(i).update(deltaTime);
+
+            if (enemies.get(i).getHealth() <= 0) {
+                enemies.remove(i);
+                Audio.ENEMYDIE.play(false);
+            } else {
+                i++;
+            }
+        }
+
+        if (enemies.size() <= 0) {            
+            unlockDoors();
+        }
+    }
 
     public void render(Graphics2D g) {
         //render room

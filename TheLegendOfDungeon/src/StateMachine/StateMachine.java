@@ -42,6 +42,11 @@ public class StateMachine {
         states.get(currState).update();
     }
     
+    public void update(double deltaTime) {
+        processInput();
+        states.get(currState).update(deltaTime);
+    }
+    
     public void render(Graphics2D g) {
         states.get(currState).render(g);
     }

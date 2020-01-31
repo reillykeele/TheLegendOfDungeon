@@ -437,6 +437,16 @@ public class Entity extends GameObject {
             setPosition(xtemp, ytemp);
         }
     }
+    
+    @Override
+    public void update(double deltaTime) {
+        if (!map.transition) {
+            //getNextPosition(6 * Math.round(dt));
+
+            checkTileMapCollision();
+            setPosition(xtemp, ytemp);
+        }
+    }
 
     @Override
     public void render(Graphics2D g) {

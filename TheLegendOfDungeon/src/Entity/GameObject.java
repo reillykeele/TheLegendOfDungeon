@@ -108,6 +108,10 @@ public class GameObject {
     public void update() {
         animate();
     }
+    
+    public void update(double deltaTime) {
+        animate();
+    }
 
     public void render(Graphics2D g) {
 //        g.drawImage(animations[currAnimation].getSprite(), (int) (x * GamePanel.SCALE - state.getCamera().getXOffset()) - (width - (int) (GamePanel.TILESIZE * GamePanel.SCALE)), (int) (y * GamePanel.SCALE - state.getCamera().getYOffset()) - (height - (int) (GamePanel.TILESIZE * GamePanel.SCALE)), width, height, null);

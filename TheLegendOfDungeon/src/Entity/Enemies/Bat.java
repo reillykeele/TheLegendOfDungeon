@@ -18,6 +18,14 @@ public class Bat extends Enemy {
 
     //DIRECTION IS AN INTEGER FROM [0, 360]
     private int direction;
+    
+    // kinematic wander
+    private int wanderRadius = 15;
+    private int wanderOffset = 8;
+    private int wanderRate = 60;
+    
+    private int lastWander;
+    
 
     private static final int INCREMENTER = 3;
 
@@ -52,6 +60,12 @@ public class Bat extends Enemy {
     
     public void getRandomDirection() {
         direction = (int) -(Math.random() * 360);
+    }
+    
+    // takes in the waderRadius, and the wanderOffset
+    // and calculates a point +- the radius
+    public void getPoint(int radius, int offset) {
+        
     }
 
     @Override
@@ -97,13 +111,6 @@ public class Bat extends Enemy {
         }
     }
 
-//    @Override
-//    public void checkTileMapCollision() {
-//        super.checkTileMapCollision();
-//        
-//        
-//
-//    }
     @Override
     public void getNextPosition(double speed) {
 
@@ -125,6 +132,29 @@ public class Bat extends Enemy {
         animate();
 
         //System.out.println(direction);
+        if (direction > 0) {
+            direction = (-360 - (direction));
+        } else if (direction <= -360) {
+            direction = (360 + direction);
+        } 
+
+        if(!flinching) {
+        getNextPosition(speed);
+        calcDirection();
+        } else {
+            flinch();
+        }
+
+//        lastWander += Time.deltaTime();
+
+        
+    }
+    
+    @Override
+    public void update(double deltaTime) {
+        super.update(deltaTime);
+        animate();
+        
         if (direction > 0) {
             direction = (-360 - (direction));
         } else if (direction <= -360) {

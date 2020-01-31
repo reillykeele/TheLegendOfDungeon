@@ -45,6 +45,8 @@ public class Player extends Entity {
     private boolean bossKey = false;
 
     private boolean dead;
+    
+    private int speedAdj;
 
     public Player(Map map, double x, double y) {
         super(map, x, y);
@@ -57,6 +59,7 @@ public class Player extends Entity {
 
         health = 5;
         speed = 4;
+        speedAdj = 4;
         //4
 
         damage = 1;
@@ -465,6 +468,79 @@ public class Player extends Entity {
             //}
         }
     }
+    
+    @Override
+    public void update(double deltaTime) {
+
+        calcAnimation();
+        animate();
+
+        //ATTACK
+        if (!map.transition) {
+
+            if (coinQueue > 0) {
+                coins++;
+                coinQueue--;
+
+                if (coinQueue == 1) {
+                    Audio.GETCOIN2.stop();
+                    Audio.GETCOIN.play(false);
+                }
+            }
+
+            if (attack || attacking) {
+                attack(facing);
+                dx = 0;
+                dy = 0;
+            }
+
+            if (!attacking) {
+                calcDirection();
+
+                if (!attack) {
+                    getNextPosition(GamePanel.pps2ppf(speedAdj * deltaTime));
+                }
+            }
+
+            if (flinching) {
+                flinch();
+            }
+
+            checkTileMapCollision();
+            setPosition(xtemp, ytemp);
+
+            hud = new HUD(this);
+
+            if (getHealth() <= 0) {
+                dead = true;
+            }
+
+            //CHECK DOORS
+            //if (!map.rooms[currRoom.getRow()][currRoom.getCol()].getLocked()) {
+            if (y / GamePanel.TILESIZE == 1) {
+                map.nextRoom(Map.NORTH);
+                setPosition(x, 8 * GamePanel.TILESIZE);
+            }
+
+            if ((int) (x + 1) / GamePanel.TILESIZE == 15) {
+                map.nextRoom(Map.EAST);
+                setPosition(2 * GamePanel.TILESIZE, y);
+            }
+
+            if ((int) (y + 1) / GamePanel.TILESIZE == 9) {
+                map.nextRoom(Map.SOUTH);
+
+                setPosition(x, 2 * GamePanel.TILESIZE);
+            }
+
+            if (x / GamePanel.TILESIZE == 1) {
+                map.nextRoom(Map.WEST);
+                setPosition(14 * GamePanel.TILESIZE, y);
+            }
+            //}
+        }
+    }
+
 
     @Override
     public void render(Graphics2D g

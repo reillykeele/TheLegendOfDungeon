@@ -49,8 +49,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private StateMachine stateMachine;
 
-    private static final int TARGET_FPS = 30;
-    private static final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
+    private static final int TARGET_RENDER_FPS = 120;
+    private static final int TARGET_UPDATE_FPS = 60;
+    private static final long OPTIMAL_TIME = 1000000000 / TARGET_RENDER_FPS;
     private long initialStartTime;
 
     private int time = 0;
@@ -105,7 +106,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         running = true;
 
-        gameLoop4();
+        gameLoop6();
     }
 
     public void gameLoop() {
@@ -169,8 +170,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         double lastRenderTime = System.nanoTime();
 
         //If we are able to get as high as this FPS, don't render again.
-        final double TARGET_FPS = 1;
-        final double TARGET_TIME_BETWEEN_RENDERS = 1000000000 / TARGET_FPS;
+        final double TARGET_RENDER_FPS = 1;
+        final double TARGET_TIME_BETWEEN_RENDERS = 1000000000 / TARGET_RENDER_FPS;
 
         //Simple way of finding FPS.
         int lastSecondTime = (int) (lastUpdateTime / 1000000000);
@@ -272,6 +273,68 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
         }
     }
+    
+    public void gameLoop6() {      
+        
+        initialStartTime = System.nanoTime();
+        
+        final long framesPerNano = (long) (TARGET_UPDATE_FPS * Math.pow(10, 9));
+        final long nanoPerFrame = (long) (1000000000 / TARGET_UPDATE_FPS);
+        
+        final long renderFPN = (long) (TARGET_RENDER_FPS * Math.pow(10, 9));
+        final long renderNPF = (long) (1000000000 / TARGET_RENDER_FPS);
+               
+        long sinceLastUpdate = 0;
+        long sinceLastRender = 0;
+        
+        long previous = System.nanoTime();
+        double lag = 0.0;
+        
+        int renderFrameCount = 0;
+        long sinceLastSecond = 0; 
+        
+        while(running) {
+            long current = System.nanoTime();
+            long elapsed = current - previous;
+            previous = current;
+            
+            lag += elapsed;                        
+            
+            sinceLastUpdate += elapsed;
+            if(sinceLastUpdate >= nanoPerFrame) {
+                update(nanoToSec(sinceLastUpdate));
+                sinceLastUpdate = 0;
+            }
+            
+            sinceLastRender += System.nanoTime() - previous;
+            if(sinceLastRender >= renderNPF) {
+                repaint();
+                renderFrameCount++;
+                sinceLastRender = 0;
+            }                      
+             
+            sinceLastSecond += elapsed;
+            if (sinceLastSecond > 1000000000) {                    
+                    fps = renderFrameCount;
+                    time++;
+                    renderFrameCount = 0;
+                    sinceLastSecond = 0;
+            }
+        }
+    }
+    
+    private double nanoToSec(long nano) {
+        return (double) (nano * Math.pow(10, -9));
+    }
+    
+    // given pixels per second, return the pixels per frame 
+    public static final int pps2ppf(double pps) {
+        return (int) (pps * (TARGET_UPDATE_FPS));
+    }
+    
+    public long getTime() {
+        return System.nanoTime() - initialStartTime;
+    }
 
     public void drawGame(float interpolation) {
         setInterpolation(interpolation);
@@ -312,6 +375,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         KeyHandler.update();
 //        ControllerHandler.update();
     }
+    
+    public void update(double deltaTime) {
+        System.out.println(deltaTime);
+        
+        //input.update();
+        //stateMachine.processInput(input);
+        calcScreen();
+        stateMachine.update(deltaTime);
+        
+        KeyHandler.update();
+//        ControllerHandler.update();
+    }
 
     //CALLED FROM PAINTCOMPONENT
     //RENDERS TO G2D IMAGE
@@ -345,13 +420,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         g.setFont(fpsFont);
         g.setColor(Color.GREEN);
-//        g.drawString("" + fps, 5, 30);
+        g.drawString("FPS: " + fps, 5, 45);
 
-//        if (time % 60 < 10) {
-//            g.drawString("" + (time / 60) + ":0" + (time % 60), 5, 60);
-//        } else {
-//            g.drawString("" + (time / 60) + ":" + (time % 60), 5, 60);
-//        }
+        if (time % 60 < 10) {
+            g.drawString("" + (time / 60) + ":0" + (time % 60), 5, 60);
+        } else {
+            g.drawString("" + (time / 60) + ":" + (time % 60), 5, 60);
+        }
 
         //g.fillRect(10, 10, 50, 50);
     }

@@ -166,6 +166,14 @@ public class MenuState extends State {
             blinking = !blinking;
         }
     }
+    
+    @Override
+    public void update(double deltaTime) {
+        if (lastBlink + timeBetweenBlinks <= System.nanoTime()) {
+            lastBlink = System.nanoTime();
+            blinking = !blinking;
+        }
+    }
 
     @Override
     public void render(Graphics2D g) {

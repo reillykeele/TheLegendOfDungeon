@@ -23,6 +23,10 @@ public class State {
     public void update() {
         
     }
+    
+    public void update(double deltaTime) {
+        
+    }
 
     public void render(Graphics2D g) {
 

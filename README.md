@@ -1,1 +1,2 @@
 # The Legend of Dungeon
+'The Legend of Dungeon' is a game and engine programmed in Java as a personal project in my senior year of highschool. It combines classic 'Legend of Zelda' swordplay in a rogue-like procedurally generated 'Binding of Isaac' style dungeon. The game won best student project at the 2018 Brandon University Computer Science Fair. This project was a way to continue to experiment with Object Oriented design, as well as gain an introduction to game development. 
